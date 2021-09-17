@@ -1,0 +1,32 @@
+<animated-vector
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    tools:targetApi="lollipop">
+    <aapt:attr name="android:drawable">
+        <vector
+            android:name="vector"
+            android:width="512dp"
+            android:height="512dp"
+            android:viewportWidth="512"
+            android:viewportHeight="512">
+            <group android:name="group"/>
+            <path
+                android:name="stop"
+                android:pathData="M 0 30 C 0 13.43 13.43 0 30 0 L 482 0 C 498.57 0 512 13.43 512 30 L 512 482 C 512 498.57 498.57 512 482 512 L 30 512 C 13.43 512 0 498.57 0 482 L 0 30 Z"
+                android:fillColor="#ffffff"
+                android:strokeWidth="1"/>
+        </vector>
+    </aapt:attr>
+    <target android:name="stop">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:propertyName="pathData"
+                android:duration="300"
+                android:valueFrom="M 512 30 C 512 180.667 512 331.333 512 482 C 512 498.57 498.57 512 482 512 L 30 512 C 13.43 512 0 498.57 0 482 L 0 30 L 0 30 C 0 13.43 13.43 0 30 0 L 482 0 C 498.57 0 512 13.43 512 30"
+                android:valueTo="M 498.86 236.91 C 516.4 245.87 516.39 268.25 498.84 277.2 C 422.278 316.242 345.717 355.283 269.155 394.325 L 39.47 511.45 C 21.92 520.4 -0.01 509.2 0 491.29 L 0.09 256.905 L 0.18 22.52 C 0.19 4.61 22.12 -6.57 39.66 2.39 L 498.86 236.91 C 498.86 236.91 498.86 236.91 498.86 236.91"
+                android:valueType="pathType"
+                android:interpolator="@android:anim/decelerate_interpolator"/>
+        </aapt:attr>
+    </target>
+</animated-vector>
