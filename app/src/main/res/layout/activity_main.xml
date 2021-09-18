@@ -23,10 +23,10 @@
             android:id="@+id/actionButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginRight="40dp"
-            android:layout_marginBottom="40dp"
+            android:layout_marginLeft="@dimen/button_margin"
+            android:layout_marginTop="@dimen/button_margin"
+            android:layout_marginRight="@dimen/button_margin"
+            android:layout_marginBottom="@dimen/button_margin"
             android:contentDescription="@string/action_button_content_description" />
     </androidx.cardview.widget.CardView>
 

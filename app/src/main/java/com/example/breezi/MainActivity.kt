@@ -86,57 +86,44 @@ class MainActivity : AppCompatActivity() {
             "https://lfhh.radioca.st/stream",
             "http://66.228.41.10:8000/http://thirtythree-45.com:8000")
 
-        //storing the search status
-        var searching = false
-
         //stream controls
         actionButton.setOnClickListener()
         {
             if(!isOnline(this))
                 showToast("Please Check Your Network Connection")
 
-            else {
-                if(searching){
-                    searching = false
-                    mediaPlayer!!.stop()
+            else if(mediaPlayer==null || !mediaPlayer!!.isPlaying) {
+                GlobalScope.launch(Dispatchers.IO) {
+                    try {
+                        this@MainActivity.runOnUiThread{
+                            actionButton.isEnabled = false
+                        }
+                        mediaPlayer = MediaPlayer.create(this@MainActivity, Uri.parse(streamURL[0]))
+                        mediaPlayer?.start()
+
+                        this@MainActivity.runOnUiThread{
+                            actionButton.isEnabled = true
+                            label.text = mediaPlayer!!.isPlaying.toString()
+                        }
+                    } catch (e: Exception) {
+                        this@MainActivity.runOnUiThread {
+                            showToast("An Error Occured! Please Try Later")
+                            Log.d("bruh",e.toString())
+                        }
+                    }
+                }
+                buttonAnimation(actionButton,"pts")
+            }
+
+            else{
+                GlobalScope.launch(Dispatchers.IO) {
+                    mediaPlayer?.pause()
                     this@MainActivity.runOnUiThread {
                         label.text = mediaPlayer!!.isPlaying.toString()
                     }
-                    mediaPlayer!!.release()
-                    mediaPlayer = null
-
-                    buttonAnimation(actionButton,"stp")
                 }
 
-                if(mediaPlayer==null || !mediaPlayer!!.isPlaying) {
-                    GlobalScope.launch(Dispatchers.IO) {
-                        try {
-                            mediaPlayer = MediaPlayer.create(this@MainActivity, Uri.parse(streamURL[0]))
-                            mediaPlayer?.start()
-
-                            this@MainActivity.runOnUiThread{
-                                label.text = mediaPlayer!!.isPlaying.toString()
-                            }
-                        } catch (e: Exception) {
-                            this@MainActivity.runOnUiThread {
-                                showToast("An Error Occured! Please Try Later")
-                            }
-                        }
-                    }
-
-                    buttonAnimation(actionButton,"pts")
-                }
-
-                else{
-                    GlobalScope.launch(Dispatchers.IO) {
-                        mediaPlayer?.pause()
-                        this@MainActivity.runOnUiThread {
-                            label.text = mediaPlayer!!.isPlaying.toString()
-                        }
-                    }
-
-                    buttonAnimation(actionButton,"stp")
-                }
+                buttonAnimation(actionButton,"stp")
             }
         }
     }
