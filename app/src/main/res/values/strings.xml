@@ -3,5 +3,5 @@
     <string name="title_activity_main">MainActivity</string>
 
     <string name="action_button_content_description">Action Button</string>
-    <string name="test">paused</string>
+    <string name="test">offline</string>
 </resources>
