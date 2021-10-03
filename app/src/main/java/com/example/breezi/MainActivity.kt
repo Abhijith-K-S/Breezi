@@ -20,6 +20,19 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
+    data class StreamData(val id: Int, val streamName: String, val streamURL: String)
+
+    private val streamList = listOf(
+        StreamData(0,"ChillSky", "https://lfhh.radioca.st/stream"),
+        StreamData(1,"Lauft FM", "https://lofi.stream.laut.fm/lofi"),
+        StreamData(2,"Planet Lofi","http://198.245.60.88:8080"),
+        StreamData(3,"KauteMusik FM Study","http://de-hz-fal-stream07.rautemusik.fm/study"),
+        StreamData(4,"BFlash","http://bardia.cloud:8000/stream/1/")
+    )
+
+    private val streamDataSize = streamList.size
+    private var streamIndex = 0
+
     private fun showToast(message: String)
     {
         val toast = Toast.makeText(this,message,Toast.LENGTH_SHORT)
@@ -72,7 +85,10 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
     }
 
     private lateinit var actionButton: ImageView
+    private lateinit var prevButton: ImageView
+    private lateinit var nextButton: ImageView
     private lateinit var label: Button
+    private var isPlaying = false
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -82,37 +98,30 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
 
         //initialise media player and buttons
         actionButton = findViewById(R.id.actionButton)
+        prevButton = findViewById(R.id.prevButton)
+        nextButton = findViewById(R.id.nextButton)
         label = findViewById(R.id.air)
         actionButton.setImageDrawable(getDrawable(R.drawable.play_to_stop_anim))
 
-        var mediaPlayer : MediaPlayer? = null
-        mediaPlayer?.setOnPreparedListener(this)
+        var mediaPlayer: MediaPlayer? = null
 
-        //stream URL's
-        val streamURL = arrayOf(
-            "https://lfhh.radioca.st/stream",
-            "http://66.228.41.10:8000/http://thirtythree-45.com:8000")
-
-        //stream controls
-        actionButton.setOnClickListener()
+        //function to control playback
+        fun playStream()
         {
             if(!isOnline(this))
                 showToast("Please Check Your Network Connection")
 
-            else if(mediaPlayer==null || !mediaPlayer!!.isPlaying) {
+            else if(!isPlaying) {
                 GlobalScope.launch(Dispatchers.IO) {
-                    this@MainActivity.runOnUiThread {
-                        actionButton.isEnabled = false
-                    }
-
+                    isPlaying = true
                     mediaPlayer = MediaPlayer().apply {
-                            setAudioAttributes(
-                                AudioAttributes.Builder()
-                                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                                    .build()
-                            )
-                        setDataSource(streamURL[0])
+                        setAudioAttributes(
+                            AudioAttributes.Builder()
+                                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                .setUsage(AudioAttributes.USAGE_MEDIA)
+                                .build()
+                        )
+                        setDataSource(streamList[streamIndex].streamURL)
                         setOnPreparedListener(this@MainActivity)
                         setOnErrorListener(this@MainActivity)
                         prepareAsync()
@@ -125,6 +134,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
                 GlobalScope.launch(Dispatchers.IO) {
                     if(mediaPlayer!=null)
                         mediaPlayer?.reset()
+                    isPlaying = false
                     this@MainActivity.runOnUiThread {
                         label.text = mediaPlayer!!.isPlaying.toString()
                     }
@@ -133,21 +143,55 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
                 buttonAnimation(actionButton,"stp")
             }
         }
+
+        //stream controls
+        actionButton.setOnClickListener()
+        {
+            playStream()
+        }
+
+        prevButton.setOnClickListener()
+        {
+            if(isOnline(this)) {
+                GlobalScope.launch(Dispatchers.IO)
+                {
+                    streamIndex = (streamDataSize + streamIndex - 1) % streamDataSize
+                    mediaPlayer?.reset()
+                }
+                buttonAnimation(actionButton, "stp")
+                playStream()
+            }
+            else
+                showToast("No Connection")
+        }
+
+        nextButton.setOnClickListener()
+        {
+            if(isOnline(this)) {
+                GlobalScope.launch(Dispatchers.IO)
+                {
+                    streamIndex = (streamIndex + 1) % streamDataSize
+                    mediaPlayer?.reset()
+                }
+                buttonAnimation(actionButton, "stp")
+                playStream()
+            }
+            else
+                showToast("No Connection")
+        }
     }
 
     override fun onPrepared(mediaPlayer: MediaPlayer?) {
         mediaPlayer?.start()
-        actionButton.isEnabled = true
-        label.text = mediaPlayer?.isPlaying.toString()
+        label.text = streamList[streamIndex].streamName
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
         showToast("MediaPlayer Error: $p1")
         p0?.reset()
+        isPlaying = false
         buttonAnimation(actionButton,"stp")
-        if(!actionButton.isEnabled)
-            actionButton.isEnabled = true
         label.text = p0?.isPlaying.toString()
         return true
     }

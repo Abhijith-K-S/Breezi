@@ -3,5 +3,7 @@
     <string name="title_activity_main">MainActivity</string>
 
     <string name="action_button_content_description">Action Button</string>
+    <string name="prev_button_content_description">Previous Button</string>
+    <string name="next_button_content_description">Next Button</string>
     <string name="test">offline</string>
 </resources>

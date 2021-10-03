@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Breezi/app/src/main/res/drawable/play_to_stop_anim.xml" value="0.2630208333333333" />
         <entry key="..\:/Breezi/app/src/main/res/layout/activity_main.xml" value="0.246875" />
+        <entry key="..\:/Breezi/app/src/main/res/xml/network_security_config.xml" value="0.1" />
       </map>
     </option>
   </component>

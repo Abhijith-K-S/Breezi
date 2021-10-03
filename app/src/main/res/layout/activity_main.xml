@@ -6,42 +6,103 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:backgroundTint="@color/green"
-        app:cardCornerRadius="60dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.473"
-        tools:targetApi="lollipop">
+        tools:layout_editor_absoluteX="29dp">
 
-        <ImageView
-            android:id="@+id/actionButton"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/button_margin"
-            android:layout_marginTop="@dimen/button_margin"
-            android:layout_marginRight="@dimen/button_margin"
-            android:layout_marginBottom="@dimen/button_margin"
-            android:contentDescription="@string/action_button_content_description" />
-    </androidx.cardview.widget.CardView>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/prevButtonCardView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:backgroundTint="@color/green"
+            app:cardCornerRadius="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/playBackCardView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.473"
+            tools:targetApi="lollipop">
+
+            <ImageView
+                android:id="@+id/prevButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/button_offset2"
+                android:layout_marginTop="@dimen/button_margin"
+                android:layout_marginRight="@dimen/button_offset"
+                android:layout_marginBottom="@dimen/button_margin"
+                android:src="@drawable/prev"
+                android:contentDescription="@string/prev_button_content_description" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/playBackCardView"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:backgroundTint="@color/green"
+            app:cardCornerRadius="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            tools:targetApi="lollipop">
+
+            <ImageView
+                android:id="@+id/actionButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/button_margin"
+                android:layout_marginTop="@dimen/button_margin"
+                android:layout_marginRight="@dimen/button_margin"
+                android:layout_marginBottom="@dimen/button_margin"
+                android:contentDescription="@string/action_button_content_description" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/nextButtonCardView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:backgroundTint="@color/green"
+            app:cardCornerRadius="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/playBackCardView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.473"
+            tools:targetApi="lollipop">
+
+            <ImageView
+                android:id="@+id/nextButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/button_offset"
+                android:layout_marginTop="@dimen/button_margin"
+                android:layout_marginRight="@dimen/button_offset2"
+                android:layout_marginBottom="@dimen/button_margin"
+                android:src="@drawable/next"
+                android:contentDescription="@string/next_button_content_description" />
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
         android:id="@+id/air"
         android:layout_width="124dp"
         android:layout_height="46dp"
+        android:layout_marginBottom="60dp"
         android:backgroundTint="@color/green"
         android:text="@string/test"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
         tools:targetApi="lollipop" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
