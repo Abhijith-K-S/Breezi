@@ -9,11 +9,13 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.Toast
+import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -84,11 +86,16 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
         }
     }
 
+    private lateinit var actionButtonCardView: CardView
     private lateinit var actionButton: ImageView
-    private lateinit var prevButton: ImageView
-    private lateinit var nextButton: ImageView
-    private lateinit var label: Button
+    private lateinit var prevButton: CardView
+    private lateinit var nextButton: CardView
+    private lateinit var label: TextView
+    private lateinit var loadView: ProgressBar
+
     private var isPlaying = false
+    private lateinit var fadeIn: Animation
+    private lateinit var fadeOut: Animation
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -97,13 +104,24 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
         setContentView(R.layout.activity_main)
 
         //initialise media player and buttons
+        actionButtonCardView = findViewById(R.id.playBackCardView)
         actionButton = findViewById(R.id.actionButton)
-        prevButton = findViewById(R.id.prevButton)
-        nextButton = findViewById(R.id.nextButton)
-        label = findViewById(R.id.air)
+        prevButton = findViewById(R.id.prevButtonCardView)
+        nextButton = findViewById(R.id.nextButtonCardView)
+        label = findViewById(R.id.nowPlayingHeader)
+        loadView = findViewById(R.id.loadRing)
         actionButton.setImageDrawable(getDrawable(R.drawable.play_to_stop_anim))
 
         var mediaPlayer: MediaPlayer? = null
+
+        //Initialising animations
+        fadeIn = AnimationUtils.loadAnimation(this,R.anim.fade_in)
+        fadeOut = AnimationUtils.loadAnimation(this,R.anim.fade_out)
+
+        //hiding loadView
+        loadView.visibility = View.GONE
+        loadView.startAnimation(fadeOut)
+        loadView.visibility = View.VISIBLE
 
         //function to control playback
         fun playStream()
@@ -112,6 +130,8 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
                 showToast("Please Check Your Network Connection")
 
             else if(!isPlaying) {
+                label.startAnimation(fadeOut)
+                loadView.startAnimation(fadeIn)
                 GlobalScope.launch(Dispatchers.IO) {
                     isPlaying = true
                     mediaPlayer = MediaPlayer().apply {
@@ -135,17 +155,18 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
                     if(mediaPlayer!=null)
                         mediaPlayer?.reset()
                     isPlaying = false
-                    this@MainActivity.runOnUiThread {
-                        label.text = mediaPlayer!!.isPlaying.toString()
-                    }
                 }
-
+                if(loadView.alpha>0)
+                    loadView.startAnimation(fadeOut)
+                label.startAnimation(fadeOut)
+                label.text = getString(R.string.now_playing_header_text)
+                label.startAnimation(fadeIn)
                 buttonAnimation(actionButton,"stp")
             }
         }
 
         //stream controls
-        actionButton.setOnClickListener()
+        actionButtonCardView.setOnClickListener()
         {
             playStream()
         }
@@ -159,6 +180,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
                     mediaPlayer?.reset()
                 }
                 buttonAnimation(actionButton, "stp")
+                isPlaying = false
                 playStream()
             }
             else
@@ -174,6 +196,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
                     mediaPlayer?.reset()
                 }
                 buttonAnimation(actionButton, "stp")
+                isPlaying = false
                 playStream()
             }
             else
@@ -184,6 +207,8 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
     override fun onPrepared(mediaPlayer: MediaPlayer?) {
         mediaPlayer?.start()
         label.text = streamList[streamIndex].streamName
+        loadView.startAnimation(fadeOut)
+        label.startAnimation(fadeIn)
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -192,7 +217,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
         p0?.reset()
         isPlaying = false
         buttonAnimation(actionButton,"stp")
-        label.text = p0?.isPlaying.toString()
+        label.text = getString(R.string.now_playing_header_text)
         return true
     }
 }

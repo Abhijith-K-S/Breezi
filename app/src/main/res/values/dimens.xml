@@ -1,6 +1,9 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="button_margin">30dp</dimen>
-    <dimen name="button_offset">30dp</dimen>
-    <dimen name="button_offset2">20dp</dimen>
+    <dimen name="button_margin">22dp</dimen>
+    <dimen name="button_offset">20dp</dimen>
+    <dimen name="button_offset2">15dp</dimen>
+
+    <dimen name="mainButtonSize">100dp</dimen>
+    <dimen name="sideButtonSize">80dp</dimen>
 </resources>

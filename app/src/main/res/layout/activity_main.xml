@@ -4,7 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/darkGrey"
     tools:context=".MainActivity">
+
+    <ProgressBar
+        android:id="@+id/loadRing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+    </ProgressBar>
+
+    <TextView
+        android:id="@+id/nowPlayingHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="cursive"
+        android:gravity="center"
+        android:text="@string/now_playing_header_text"
+        android:textColor="#FFFFFF"
+        android:textSize="50sp"
+        app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+    </TextView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -12,13 +37,14 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="29dp">
+        app:layout_constraintVertical_bias="0.813"
+        tools:layout_editor_absoluteX="0dp">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/prevButtonCardView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:backgroundTint="@color/green"
+            android:layout_width="@dimen/sideButtonSize"
+            android:layout_height="@dimen/sideButtonSize"
+            android:backgroundTint="@color/buttonColor"
             app:cardCornerRadius="60dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/playBackCardView"
@@ -31,26 +57,29 @@
                 android:id="@+id/prevButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/button_offset2"
                 android:layout_marginLeft="@dimen/button_offset2"
                 android:layout_marginTop="@dimen/button_margin"
+                android:layout_marginEnd="@dimen/button_offset"
                 android:layout_marginRight="@dimen/button_offset"
                 android:layout_marginBottom="@dimen/button_margin"
+                android:contentDescription="@string/prev_button_content_description"
                 android:src="@drawable/prev"
-                android:contentDescription="@string/prev_button_content_description" />
+                tools:ignore="RedundantDescriptionCheck" />
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/playBackCardView"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:backgroundTint="@color/green"
+            android:layout_width="@dimen/mainButtonSize"
+            android:layout_height="@dimen/mainButtonSize"
+            android:backgroundTint="@color/buttonColor"
             app:cardCornerRadius="60dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_bias="1.0"
             tools:targetApi="lollipop">
 
             <ImageView
@@ -61,14 +90,15 @@
                 android:layout_marginTop="@dimen/button_margin"
                 android:layout_marginRight="@dimen/button_margin"
                 android:layout_marginBottom="@dimen/button_margin"
-                android:contentDescription="@string/action_button_content_description" />
+                android:contentDescription="@string/action_button_content_description"
+                tools:ignore="RedundantDescriptionCheck" />
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/nextButtonCardView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:backgroundTint="@color/green"
+            android:layout_width="@dimen/sideButtonSize"
+            android:layout_height="@dimen/sideButtonSize"
+            android:backgroundTint="@color/buttonColor"
             app:cardCornerRadius="60dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -81,28 +111,17 @@
                 android:id="@+id/nextButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/button_offset"
                 android:layout_marginLeft="@dimen/button_offset"
                 android:layout_marginTop="@dimen/button_margin"
+                android:layout_marginEnd="@dimen/button_offset2"
                 android:layout_marginRight="@dimen/button_offset2"
                 android:layout_marginBottom="@dimen/button_margin"
+                android:contentDescription="@string/next_button_content_description"
                 android:src="@drawable/next"
-                android:contentDescription="@string/next_button_content_description" />
+                tools:ignore="RedundantDescriptionCheck" />
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <Button
-        android:id="@+id/air"
-        android:layout_width="124dp"
-        android:layout_height="46dp"
-        android:layout_marginBottom="60dp"
-        android:backgroundTint="@color/green"
-        android:text="@string/test"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.529"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-        tools:targetApi="lollipop" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
