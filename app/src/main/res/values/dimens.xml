@@ -1,9 +1,18 @@
 <resources>
+    <dimen name="backgroundArtMarginMin">20dp</dimen>
+    <dimen name="backgroundArtMarginMax">390dp</dimen>
+
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="button_margin">22dp</dimen>
-    <dimen name="button_offset">20dp</dimen>
-    <dimen name="button_offset2">15dp</dimen>
 
     <dimen name="mainButtonSize">100dp</dimen>
     <dimen name="sideButtonSize">80dp</dimen>
+
+    <dimen name="innerCardMargin">3dp</dimen>
+    <dimen name="outerCardSize">200dp</dimen>
+    <dimen name="cornerRadius">100dp</dimen>
+
+    <dimen name="sideButtonIconMarginVertical">5dp</dimen>
+    <dimen name="sideButtonIconMarginInner">5dp</dimen>
+    <dimen name="sideButtonIconMarginOuter">3dp</dimen>
 </resources>

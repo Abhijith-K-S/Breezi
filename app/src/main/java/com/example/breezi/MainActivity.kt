@@ -2,6 +2,7 @@ package com.example.breezi
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.media.AudioAttributes
 import android.media.MediaPlayer
@@ -15,6 +16,7 @@ import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.cardview.widget.CardView
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import kotlinx.coroutines.Dispatchers
@@ -28,8 +30,16 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
         StreamData(0,"ChillSky", "https://lfhh.radioca.st/stream"),
         StreamData(1,"Lauft FM", "https://lofi.stream.laut.fm/lofi"),
         StreamData(2,"Planet Lofi","http://198.245.60.88:8080"),
-        StreamData(3,"KauteMusik FM Study","http://de-hz-fal-stream07.rautemusik.fm/study"),
+        StreamData(3,"KauteMusik FM","http://de-hz-fal-stream07.rautemusik.fm/study"),
         StreamData(4,"BFlash","http://bardia.cloud:8000/stream/1/")
+    )
+
+    private val artworkList = listOf(
+        R.drawable.artwork1,
+        R.drawable.artwork2,
+        R.drawable.artwork3,
+        R.drawable.artwork4,
+        R.drawable.artwork5
     )
 
     private val streamDataSize = streamList.size
@@ -86,42 +96,84 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
         }
     }
 
+    //function to reset artwork
+    private fun resetArtwork() {
+        artworkWindow.setImageResource(R.drawable.icon)
+        backgroundArt.setImageResource(android.R.color.transparent)
+    }
+
     private lateinit var actionButtonCardView: CardView
     private lateinit var actionButton: ImageView
-    private lateinit var prevButton: CardView
-    private lateinit var nextButton: CardView
+    private lateinit var prevButtonCardView: CardView
+    private lateinit var prevButton: ImageView
+    private lateinit var nextButtonCardView: CardView
+    private lateinit var nextButton: ImageView
     private lateinit var label: TextView
     private lateinit var loadView: ProgressBar
+    private lateinit var artworkWindow: ImageSwitcher
+    private lateinit var backgroundArt: ImageSwitcher
 
     private var isPlaying = false
     private lateinit var fadeIn: Animation
     private lateinit var fadeOut: Animation
+    private lateinit var bounce: Animation
 
     @SuppressLint("UseCompatLoadingForDrawables")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
-        //initialise media player and buttons
+        //initialise media player, buttons and views
         actionButtonCardView = findViewById(R.id.playBackCardView)
         actionButton = findViewById(R.id.actionButton)
-        prevButton = findViewById(R.id.prevButtonCardView)
-        nextButton = findViewById(R.id.nextButtonCardView)
+        prevButtonCardView = findViewById(R.id.prevButtonCardView)
+        prevButton = findViewById(R.id.prevButton)
+        nextButtonCardView = findViewById(R.id.nextButtonCardView)
+        nextButton = findViewById(R.id.nextButton)
         label = findViewById(R.id.nowPlayingHeader)
         loadView = findViewById(R.id.loadRing)
-        actionButton.setImageDrawable(getDrawable(R.drawable.play_to_stop_anim))
+        artworkWindow = findViewById(R.id.artwork)
+        backgroundArt = findViewById(R.id.backgroundArt)
 
         var mediaPlayer: MediaPlayer? = null
+
+        //setting initial icon
+        actionButton.setImageDrawable(getDrawable(R.drawable.play_to_stop_anim))
 
         //Initialising animations
         fadeIn = AnimationUtils.loadAnimation(this,R.anim.fade_in)
         fadeOut = AnimationUtils.loadAnimation(this,R.anim.fade_out)
+        bounce = AnimationUtils.loadAnimation(this,R.anim.bounce)
+
+        //Initialise artwork window and backgroundWindow
+        artworkWindow.setFactory {
+            val imgView = ImageView(applicationContext)
+            imgView.scaleType = ImageView.ScaleType.CENTER_CROP
+            imgView
+        }
+        artworkWindow.setInAnimation(applicationContext,R.anim.fade_in)
+        artworkWindow.setOutAnimation(applicationContext,R.anim.fade_out)
+
+        backgroundArt.setFactory {
+            val imgView = ImageView(applicationContext)
+            imgView.alpha = 0.5F
+            imgView.adjustViewBounds = true
+            imgView.scaleType = ImageView.ScaleType.FIT_XY
+            imgView
+        }
+        backgroundArt.setInAnimation(applicationContext,R.anim.fade_in)
+        backgroundArt.setOutAnimation(applicationContext,R.anim.fade_out)
+        backgroundArt.setBackgroundColor(Color.parseColor("#102A43"))
+
 
         //hiding loadView
         loadView.visibility = View.GONE
         loadView.startAnimation(fadeOut)
         loadView.visibility = View.VISIBLE
+
+        resetArtwork()
 
         //function to control playback
         fun playStream()
@@ -147,6 +199,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
                         prepareAsync()
                     }
                 }
+
                 buttonAnimation(actionButton,"pts")
             }
 
@@ -156,11 +209,15 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
                         mediaPlayer?.reset()
                     isPlaying = false
                 }
-                if(loadView.alpha>0)
+                if(loadView.alpha>0) {
+                    loadView.visibility = View.GONE
                     loadView.startAnimation(fadeOut)
+                    loadView.visibility = View.VISIBLE
+                }
                 label.startAnimation(fadeOut)
                 label.text = getString(R.string.now_playing_header_text)
                 label.startAnimation(fadeIn)
+                resetArtwork()
                 buttonAnimation(actionButton,"stp")
             }
         }
@@ -171,7 +228,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
             playStream()
         }
 
-        prevButton.setOnClickListener()
+        prevButtonCardView.setOnClickListener()
         {
             if(isOnline(this)) {
                 GlobalScope.launch(Dispatchers.IO)
@@ -179,6 +236,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
                     streamIndex = (streamDataSize + streamIndex - 1) % streamDataSize
                     mediaPlayer?.reset()
                 }
+                prevButton.startAnimation(bounce)
                 buttonAnimation(actionButton, "stp")
                 isPlaying = false
                 playStream()
@@ -187,7 +245,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
                 showToast("No Connection")
         }
 
-        nextButton.setOnClickListener()
+        nextButtonCardView.setOnClickListener()
         {
             if(isOnline(this)) {
                 GlobalScope.launch(Dispatchers.IO)
@@ -195,6 +253,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
                     streamIndex = (streamIndex + 1) % streamDataSize
                     mediaPlayer?.reset()
                 }
+                nextButton.startAnimation(bounce)
                 buttonAnimation(actionButton, "stp")
                 isPlaying = false
                 playStream()
@@ -209,6 +268,8 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
         label.text = streamList[streamIndex].streamName
         loadView.startAnimation(fadeOut)
         label.startAnimation(fadeIn)
+        artworkWindow.setImageResource(artworkList[streamIndex])
+        backgroundArt.setImageResource(artworkList[streamIndex])
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -218,6 +279,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
         isPlaying = false
         buttonAnimation(actionButton,"stp")
         label.text = getString(R.string.now_playing_header_text)
+        resetArtwork()
         return true
     }
 }

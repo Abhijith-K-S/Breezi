@@ -13,8 +13,8 @@
             <path
                 android:name="shape_1"
                 android:pathData="M 497.95 233.5 L 166.61 9.5 C 157.24 3.17 146.15 0 133.33 0 C 120.51 0 109.41 3.17 100.05 9.5 C 90.68 15.84 86 23.34 86 32 L 86 480 C 86 488.67 90.68 496.17 100.05 502.5 C 109.41 508.84 120.51 512 133.33 512 C 146.15 512 157.24 508.84 166.61 502.5 L 497.95 278.5 C 507.31 272.17 512 264.67 512 256 C 512 247.34 507.31 239.84 497.95 233.5 Z"
-                android:fillColor="#ffffff"
-                android:strokeColor="#000000"
+                android:fillColor="@color/darkGrey"
+                android:strokeColor="#ffffff"
                 android:strokeWidth="6"/>
             <group android:name="group_1"/>
         </vector>

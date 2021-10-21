@@ -4,9 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Breezi/app/src/main/res/drawable-v21/stop_to_play_anim.xml" value="0.13177083333333334" />
+        <entry key="..\:/Breezi/app/src/main/res/drawable/ic_baseline_skip_next_24.xml" value="0.21581196581196582" />
+        <entry key="..\:/Breezi/app/src/main/res/drawable/ic_baseline_skip_previous_24.xml" value="0.21581196581196582" />
         <entry key="..\:/Breezi/app/src/main/res/drawable/play_to_stop_anim.xml" value="0.2630208333333333" />
+        <entry key="..\:/Breezi/app/src/main/res/drawable/round_button.xml" value="0.21581196581196582" />
+        <entry key="..\:/Breezi/app/src/main/res/drawable/stop_to_play_anim.xml" value="0.21581196581196582" />
         <entry key="..\:/Breezi/app/src/main/res/font/monteserrat.xml" value="0.27708333333333335" />
-        <entry key="..\:/Breezi/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/Breezi/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/Breezi/app/src/main/res/xml/network_security_config.xml" value="0.1" />
       </map>
     </option>
@@ -16,5 +20,8 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="SuppressKotlinCodeStyleNotification">
+    <option name="disableForAll" value="true" />
   </component>
 </project>
