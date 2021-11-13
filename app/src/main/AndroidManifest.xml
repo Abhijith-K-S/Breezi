@@ -4,6 +4,7 @@
     package="com.example.breezi">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/icon"
@@ -17,12 +18,17 @@
 
         <activity
             android:name=".MainActivity"
-            android:theme="@style/Theme.Breezi.NoActionBar">
+            android:theme="@style/Theme.Breezi.NoActionBar"
+            android:screenOrientation="portrait"
+            android:exported="true"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".ForegroundService"/>
     </application>
 
 </manifest>

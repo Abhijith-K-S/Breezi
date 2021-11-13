@@ -3,17 +3,32 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Breezi/app/src/main/res/drawable-anydpi/ic_action_name.xml" value="0.21581196581196582" />
         <entry key="..\:/Breezi/app/src/main/res/drawable-v21/stop_to_play_anim.xml" value="0.13177083333333334" />
         <entry key="..\:/Breezi/app/src/main/res/drawable/ic_baseline_skip_next_24.xml" value="0.21581196581196582" />
         <entry key="..\:/Breezi/app/src/main/res/drawable/ic_baseline_skip_previous_24.xml" value="0.21581196581196582" />
+        <entry key="..\:/Breezi/app/src/main/res/drawable/notification_next.xml" value="0.21581196581196582" />
+        <entry key="..\:/Breezi/app/src/main/res/drawable/notification_pause.xml" value="0.21581196581196582" />
+        <entry key="..\:/Breezi/app/src/main/res/drawable/notification_play.xml" value="0.21581196581196582" />
+        <entry key="..\:/Breezi/app/src/main/res/drawable/notification_prev.xml" value="0.21581196581196582" />
+        <entry key="..\:/Breezi/app/src/main/res/drawable/notification_prev_background.xml" value="0.21581196581196582" />
+        <entry key="..\:/Breezi/app/src/main/res/drawable/notification_prev_foreground.xml" value="0.21581196581196582" />
         <entry key="..\:/Breezi/app/src/main/res/drawable/play_to_stop_anim.xml" value="0.2630208333333333" />
         <entry key="..\:/Breezi/app/src/main/res/drawable/round_button.xml" value="0.21581196581196582" />
         <entry key="..\:/Breezi/app/src/main/res/drawable/stop_to_play_anim.xml" value="0.21581196581196582" />
         <entry key="..\:/Breezi/app/src/main/res/font/monteserrat.xml" value="0.27708333333333335" />
         <entry key="..\:/Breezi/app/src/main/res/layout/activity_main.xml" value="0.264" />
+        <entry key="..\:/Breezi/app/src/main/res/layout/notification_layout.xml" value="0.4" />
+        <entry key="..\:/Breezi/app/src/main/res/layout/notification_view.xml" value="0.20256410256410257" />
+        <entry key="..\:/Breezi/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.21581196581196582" />
+        <entry key="..\:/Breezi/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.21581196581196582" />
+        <entry key="..\:/Breezi/app/src/main/res/mipmap-anydpi-v26/notification_prev.xml" value="0.21581196581196582" />
         <entry key="..\:/Breezi/app/src/main/res/xml/network_security_config.xml" value="0.1" />
       </map>
     </option>
+  </component>
+  <component name="ProjectPlainTextFileTypeManager">
+    <file url="file://$PROJECT_DIR$/app/src/main/res/mipmap-anydpi-v26/notification_prev.xml" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />

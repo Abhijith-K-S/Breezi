@@ -5,8 +5,8 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="button_margin">22dp</dimen>
 
-    <dimen name="mainButtonSize">100dp</dimen>
-    <dimen name="sideButtonSize">80dp</dimen>
+    <dimen name="mainButtonSize">80dp</dimen>
+    <dimen name="sideButtonSize">60dp</dimen>
 
     <dimen name="innerCardMargin">3dp</dimen>
     <dimen name="outerCardSize">200dp</dimen>
@@ -15,4 +15,12 @@
     <dimen name="sideButtonIconMarginVertical">5dp</dimen>
     <dimen name="sideButtonIconMarginInner">5dp</dimen>
     <dimen name="sideButtonIconMarginOuter">3dp</dimen>
+
+    //notification dimensions
+    <dimen name="firstLinearLayoutMargin">5dp</dimen>
+    <dimen name="firstLinearLayoutSize">20dp</dimen>
+    <dimen name="textMargin">15dp</dimen>
+
+    <dimen name="thirdLayoutVerticalMargin">10dp</dimen>
+    <dimen name="thirdLayoutHorizontalMargin">30dp</dimen>
 </resources>

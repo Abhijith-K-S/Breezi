@@ -6,5 +6,11 @@
     <string name="prev_button_content_description">Previous Button</string>
     <string name="next_button_content_description">Next Button</string>
 
-    <string name="now_playing_header_text">Now Playing</string>
+    <string name="now_playing_header_text">Breezi</string>
+
+    //notification descriptions
+    <string name="notification_icon_content_description">App Icon</string>
+    <string name="notification_prev_content_description">Skip Previous</string>
+    <string name="notification_playAndPause_content_description">Play and Pause</string>
+    <string name="notification_next_content_description">Skip Next</string>
 </resources>

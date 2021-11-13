@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:paddingBottom="10dp"
+    android:orientation="vertical"
+    android:background="@color/darkBlue">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/firstLinearLayoutSize"
+        android:layout_margin="@dimen/firstLinearLayoutMargin"
+        android:orientation="horizontal"
+        android:layout_gravity="start">
+
+        <ImageView
+            android:layout_width="@dimen/firstLinearLayoutSize"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/notification_icon_content_description"
+            android:src="@drawable/icon_round">
+        </ImageView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="@dimen/textMargin"
+            android:fontFamily="cursive"
+            android:text="@string/app_name"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:layout_marginLeft="@dimen/textMargin">
+        </TextView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:gravity="center"
+            android:id="@+id/notificationCurrentlyPlayingTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/firstLinearLayoutMargin"
+            tools:text="Currently Playing"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp">
+        </TextView>
+
+        <LinearLayout
+            android:gravity="end"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:paddingVertical="@dimen/firstLinearLayoutMargin"
+            android:paddingLeft="0dp"
+            android:paddingRight="15dp"
+            android:orientation="horizontal"
+            android:layout_marginStart="10dp"
+            android:paddingStart="0dp"
+            android:paddingEnd="15dp">
+
+             <ImageView
+                 android:layout_width="wrap_content"
+                 android:layout_height="match_parent"
+                 android:src="@drawable/notification_prev"
+                 android:contentDescription="@string/notification_prev_content_description">
+             </ImageView>
+
+             <ImageView
+                 android:layout_width="wrap_content"
+                 android:layout_height="match_parent"
+                 android:src="@drawable/notification_pause"
+                 android:contentDescription="@string/notification_playAndPause_content_description">
+             </ImageView>
+
+             <ImageView
+                 android:layout_width="wrap_content"
+                 android:layout_height="match_parent"
+                 android:src="@drawable/notification_next"
+                 android:contentDescription="@string/notification_next_content_description">
+             </ImageView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</LinearLayout>

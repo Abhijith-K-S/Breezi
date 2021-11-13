@@ -2,14 +2,12 @@ package com.example.breezi
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
+import android.content.Intent
 import android.graphics.drawable.AnimatedVectorDrawable
-import android.media.AudioAttributes
-import android.media.MediaPlayer
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Build
-import android.os.Bundle
+import android.os.*
+import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -17,33 +15,23 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {
-    data class StreamData(val id: Int, val streamName: String, val streamURL: String)
+class MainActivity : AppCompatActivity() {
 
-    private val streamList = listOf(
-        StreamData(0,"ChillSky", "https://lfhh.radioca.st/stream"),
-        StreamData(1,"Lauft FM", "https://lofi.stream.laut.fm/lofi"),
-        StreamData(2,"Planet Lofi","http://198.245.60.88:8080"),
-        StreamData(3,"KauteMusik FM","http://de-hz-fal-stream07.rautemusik.fm/study"),
-        StreamData(4,"BFlash","http://bardia.cloud:8000/stream/1/")
-    )
-
-    private val artworkList = listOf(
-        R.drawable.artwork1,
-        R.drawable.artwork2,
-        R.drawable.artwork3,
-        R.drawable.artwork4,
-        R.drawable.artwork5
-    )
+    private val streamList = StreamDetails.streamList
+    private val artworkList = StreamDetails.artworkList
 
     private val streamDataSize = streamList.size
     private var streamIndex = 0
+
+    private lateinit var resultReceiver: ResultReceiver
 
     private fun showToast(message: String)
     {
@@ -118,12 +106,14 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
     private lateinit var fadeOut: Animation
     private lateinit var bounce: Animation
 
-    @SuppressLint("UseCompatLoadingForDrawables")
+
+    @SuppressLint("UseCompatLoadingForDrawables", "UnspecifiedImmutableFlag")
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
+
 
         //initialise media player, buttons and views
         actionButtonCardView = findViewById(R.id.playBackCardView)
@@ -137,15 +127,12 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
         artworkWindow = findViewById(R.id.artwork)
         backgroundArt = findViewById(R.id.backgroundArt)
 
-        var mediaPlayer: MediaPlayer? = null
-
-        //setting initial icon
-        actionButton.setImageDrawable(getDrawable(R.drawable.play_to_stop_anim))
 
         //Initialising animations
         fadeIn = AnimationUtils.loadAnimation(this,R.anim.fade_in)
         fadeOut = AnimationUtils.loadAnimation(this,R.anim.fade_out)
         bounce = AnimationUtils.loadAnimation(this,R.anim.bounce)
+
 
         //Initialise artwork window and backgroundWindow
         artworkWindow.setFactory {
@@ -165,7 +152,7 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
         }
         backgroundArt.setInAnimation(applicationContext,R.anim.fade_in)
         backgroundArt.setOutAnimation(applicationContext,R.anim.fade_out)
-        backgroundArt.setBackgroundColor(Color.parseColor("#102A43"))
+        backgroundArt.setBackgroundColor(ContextCompat.getColor(applicationContext,R.color.darkBlue))
 
 
         //hiding loadView
@@ -175,8 +162,11 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
 
         resetArtwork()
 
+        //getting stream data from preferences
+        loadStream()
+
         //function to control playback
-        fun playStream()
+        fun playStream(playBtnAnim: Boolean)
         {
             if(!isOnline(this))
                 showToast("Please Check Your Network Connection")
@@ -186,28 +176,17 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
                 loadView.startAnimation(fadeIn)
                 GlobalScope.launch(Dispatchers.IO) {
                     isPlaying = true
-                    mediaPlayer = MediaPlayer().apply {
-                        setAudioAttributes(
-                            AudioAttributes.Builder()
-                                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                                .setUsage(AudioAttributes.USAGE_MEDIA)
-                                .build()
-                        )
-                        setDataSource(streamList[streamIndex].streamURL)
-                        setOnPreparedListener(this@MainActivity)
-                        setOnErrorListener(this@MainActivity)
-                        prepareAsync()
-                    }
+                    musicServiceControl(StreamDetails.startStream,!playBtnAnim)
                 }
 
-                buttonAnimation(actionButton,"pts")
+                if (playBtnAnim)
+                    buttonAnimation(actionButton, "pts")
             }
 
             else{
                 GlobalScope.launch(Dispatchers.IO) {
-                    if(mediaPlayer!=null)
-                        mediaPlayer?.reset()
                     isPlaying = false
+                    musicServiceControl(StreamDetails.stopStream,true)
                 }
                 if(loadView.alpha>0) {
                     loadView.visibility = View.GONE
@@ -225,21 +204,21 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
         //stream controls
         actionButtonCardView.setOnClickListener()
         {
-            playStream()
+            playStream(true)
         }
 
         prevButtonCardView.setOnClickListener()
         {
             if(isOnline(this)) {
-                GlobalScope.launch(Dispatchers.IO)
-                {
+                GlobalScope.launch(Dispatchers.IO) {
                     streamIndex = (streamDataSize + streamIndex - 1) % streamDataSize
-                    mediaPlayer?.reset()
                 }
+
+                val playBtnAnim  = !isPlaying
                 prevButton.startAnimation(bounce)
                 buttonAnimation(actionButton, "stp")
                 isPlaying = false
-                playStream()
+                playStream(playBtnAnim)
             }
             else
                 showToast("No Connection")
@@ -248,23 +227,93 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
         nextButtonCardView.setOnClickListener()
         {
             if(isOnline(this)) {
-                GlobalScope.launch(Dispatchers.IO)
-                {
+                GlobalScope.launch(Dispatchers.IO) {
                     streamIndex = (streamIndex + 1) % streamDataSize
-                    mediaPlayer?.reset()
                 }
+                val playBtnAnim = !isPlaying
                 nextButton.startAnimation(bounce)
-                buttonAnimation(actionButton, "stp")
                 isPlaying = false
-                playStream()
+                playStream(playBtnAnim)
             }
             else
                 showToast("No Connection")
         }
     }
 
-    override fun onPrepared(mediaPlayer: MediaPlayer?) {
-        mediaPlayer?.start()
+
+    //function to start the foreground service
+    private fun musicServiceControl(controlCode: String, currentStream: Boolean) {
+        val intent = Intent(this,ForegroundService::class.java)
+        intent.putExtra("Stream Index",streamIndex)
+        intent.putExtra("Control Status",controlCode)
+        intent.putExtra("Current Stream",currentStream)
+        intent.putExtra("resultReceiver",resultReceiver)
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            startForegroundService(intent)
+        else
+            startService(intent)
+    }
+
+    //function to save data to shared preferences
+    private fun saveStream() {
+        val preferences = this.getPreferences(Context.MODE_PRIVATE)
+        val editor = preferences.edit()
+        editor.putInt("streamIndex",streamIndex)
+        editor.putBoolean("isPlaying",isPlaying)
+        editor.apply()
+    }
+
+
+    //function to load data from shared preferences
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun loadStream() {
+        val preferences = this.getPreferences(Context.MODE_PRIVATE)
+        streamIndex = preferences.getInt("streamIndex",0)
+        isPlaying = preferences.getBoolean("isPlaying",false)
+
+        if(isPlaying) {
+            actionButton.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.play_to_stop_anim))
+            artworkWindow.setImageResource(artworkList[streamIndex])
+            backgroundArt.setImageResource(artworkList[streamIndex])
+        }
+
+        else {
+            actionButton.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.stop_to_play_anim))
+            resetArtwork()
+        }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    override fun onResume() {
+        super.onResume()
+        loadStream()
+        loadView.visibility = View.GONE
+        loadView.startAnimation(fadeOut)
+        loadView.visibility = View.VISIBLE
+
+
+        //receives
+        resultReceiver = object: ResultReceiver(Handler(Looper.myLooper()!!)) {
+            override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
+                super.onReceiveResult(resultCode, resultData)
+                Log.d("tag","working")
+                when(resultCode) {
+                    StreamDetails.prepSupport.id -> onPreparedSupport()
+                    StreamDetails.errorSupport.id -> onErrorSupport()
+                }
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        saveStream()
+    }
+
+
+    fun onPreparedSupport() {
         label.text = streamList[streamIndex].streamName
         loadView.startAnimation(fadeOut)
         label.startAnimation(fadeIn)
@@ -273,13 +322,11 @@ class MainActivity : AppCompatActivity(), MediaPlayer.OnPreparedListener, MediaP
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    override fun onError(p0: MediaPlayer?, p1: Int, p2: Int): Boolean {
-        showToast("MediaPlayer Error: $p1")
-        p0?.reset()
+    fun onErrorSupport() {
+        showToast("MediaPlayer Error")
         isPlaying = false
         buttonAnimation(actionButton,"stp")
         label.text = getString(R.string.now_playing_header_text)
         resetArtwork()
-        return true
     }
 }

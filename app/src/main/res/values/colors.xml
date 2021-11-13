@@ -11,5 +11,7 @@
     <color name="green">#3ADA0E</color>
     <color name="darkGrey">#121212</color>
 
+    <color name="darkBlue">#102A43</color>
+
     <color name="buttonColor">#ffffff</color>
 </resources>
