@@ -3,11 +3,10 @@ package com.example.breezi
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.drawable.AnimatedVectorDrawable
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.*
-import android.util.Log
+import android.os.Build
+import android.os.Bundle
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -24,14 +23,18 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-
     private val streamList = StreamDetails.streamList
     private val artworkList = StreamDetails.artworkList
 
     private val streamDataSize = streamList.size
     private var streamIndex = 0
+    private var isPlaying = false
 
-    private lateinit var resultReceiver: ResultReceiver
+
+    //shared preferences values
+    private lateinit var preferences : SharedPreferences
+    private lateinit var editor : SharedPreferences.Editor
+
 
     private fun showToast(message: String)
     {
@@ -41,26 +44,7 @@ class MainActivity : AppCompatActivity() {
 
     //function to check for network connectivity
     private fun isOnline(context: Context): Boolean {
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-        {
-            val network = connectivityManager.activeNetwork ?: return false
-            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
-
-            return when {
-                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                else -> false
-            }
-        }
-        else
-        {
-            @Suppress("DEPRECATION") val networkInfo =
-                connectivityManager.activeNetworkInfo ?: return false
-            @Suppress("DEPRECATION")
-            return networkInfo.isConnected
-        }
+        return StreamDetails.isOnline(context)
     }
 
     //function to play button animation
@@ -101,7 +85,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var artworkWindow: ImageSwitcher
     private lateinit var backgroundArt: ImageSwitcher
 
-    private var isPlaying = false
     private lateinit var fadeIn: Animation
     private lateinit var fadeOut: Animation
     private lateinit var bounce: Animation
@@ -160,10 +143,6 @@ class MainActivity : AppCompatActivity() {
         loadView.startAnimation(fadeOut)
         loadView.visibility = View.VISIBLE
 
-        resetArtwork()
-
-        //getting stream data from preferences
-        loadStream()
 
         //function to control playback
         fun playStream(playBtnAnim: Boolean)
@@ -176,6 +155,7 @@ class MainActivity : AppCompatActivity() {
                 loadView.startAnimation(fadeIn)
                 GlobalScope.launch(Dispatchers.IO) {
                     isPlaying = true
+                    saveStream()
                     musicServiceControl(StreamDetails.startStream,!playBtnAnim)
                 }
 
@@ -186,6 +166,7 @@ class MainActivity : AppCompatActivity() {
             else{
                 GlobalScope.launch(Dispatchers.IO) {
                     isPlaying = false
+                    saveStream()
                     musicServiceControl(StreamDetails.stopStream,true)
                 }
                 if(loadView.alpha>0) {
@@ -216,7 +197,6 @@ class MainActivity : AppCompatActivity() {
 
                 val playBtnAnim  = !isPlaying
                 prevButton.startAnimation(bounce)
-                buttonAnimation(actionButton, "stp")
                 isPlaying = false
                 playStream(playBtnAnim)
             }
@@ -230,6 +210,7 @@ class MainActivity : AppCompatActivity() {
                 GlobalScope.launch(Dispatchers.IO) {
                     streamIndex = (streamIndex + 1) % streamDataSize
                 }
+                
                 val playBtnAnim = !isPlaying
                 nextButton.startAnimation(bounce)
                 isPlaying = false
@@ -244,10 +225,8 @@ class MainActivity : AppCompatActivity() {
     //function to start the foreground service
     private fun musicServiceControl(controlCode: String, currentStream: Boolean) {
         val intent = Intent(this,ForegroundService::class.java)
-        intent.putExtra("Stream Index",streamIndex)
         intent.putExtra("Control Status",controlCode)
         intent.putExtra("Current Stream",currentStream)
-        intent.putExtra("resultReceiver",resultReceiver)
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             startForegroundService(intent)
@@ -257,10 +236,8 @@ class MainActivity : AppCompatActivity() {
 
     //function to save data to shared preferences
     private fun saveStream() {
-        val preferences = this.getPreferences(Context.MODE_PRIVATE)
-        val editor = preferences.edit()
-        editor.putInt("streamIndex",streamIndex)
-        editor.putBoolean("isPlaying",isPlaying)
+        editor.putInt(StreamDetails.streamIndex,streamIndex)
+        editor.putBoolean(StreamDetails.isPlaying,isPlaying)
         editor.apply()
     }
 
@@ -268,17 +245,19 @@ class MainActivity : AppCompatActivity() {
     //function to load data from shared preferences
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun loadStream() {
-        val preferences = this.getPreferences(Context.MODE_PRIVATE)
-        streamIndex = preferences.getInt("streamIndex",0)
-        isPlaying = preferences.getBoolean("isPlaying",false)
+        streamIndex = preferences.getInt(StreamDetails.streamIndex,0)
+        isPlaying = preferences.getBoolean(StreamDetails.isPlaying,false)
+
 
         if(isPlaying) {
+            label.text = streamList[streamIndex].streamName
             actionButton.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.play_to_stop_anim))
             artworkWindow.setImageResource(artworkList[streamIndex])
             backgroundArt.setImageResource(artworkList[streamIndex])
         }
 
         else {
+            label.text = getString(R.string.app_name)
             actionButton.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.stop_to_play_anim))
             resetArtwork()
         }
@@ -288,23 +267,65 @@ class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onResume() {
         super.onResume()
-        loadStream()
+
+        preferences = this.getSharedPreferences(StreamDetails.sharedPreferencesFileName,Context.MODE_PRIVATE)!!
+        editor = preferences.edit()
+
         loadView.visibility = View.GONE
         loadView.startAnimation(fadeOut)
         loadView.visibility = View.VISIBLE
 
+        loadStream()
 
-        //receives
-        resultReceiver = object: ResultReceiver(Handler(Looper.myLooper()!!)) {
-            override fun onReceiveResult(resultCode: Int, resultData: Bundle?) {
-                super.onReceiveResult(resultCode, resultData)
-                Log.d("tag","working")
-                when(resultCode) {
-                    StreamDetails.prepSupport.id -> onPreparedSupport()
-                    StreamDetails.errorSupport.id -> onErrorSupport()
+        var initialRun = true
+        ForegroundService.EventBus.observe(
+            this, { customEvent ->
+                if(initialRun)
+                    initialRun = false
+                else {
+                    when (customEvent.eventCode) {
+                        StreamDetails.prepSupport -> onPreparedSupport()
+                        StreamDetails.errorSupport -> onErrorSupport()
+
+                        StreamDetails.notificationPrevious,StreamDetails.notificationNext -> {
+                            streamIndex = preferences.getInt(StreamDetails.streamIndex,0)
+
+                            if(!isPlaying) {
+                                buttonAnimation(actionButton, "pts")
+                                isPlaying = true
+                            }
+
+                            label.startAnimation(fadeOut)
+                            loadView.startAnimation(fadeIn)
+                        }
+
+                        StreamDetails.notificationPlayback -> {
+                            loadStream()
+                            when (isPlaying) {
+                                false -> {
+                                    if (loadView.alpha > 0) {
+                                        loadView.visibility = View.GONE
+                                        loadView.startAnimation(fadeOut)
+                                        loadView.visibility = View.VISIBLE
+                                    }
+                                    label.startAnimation(fadeOut)
+                                    label.text = getString(R.string.now_playing_header_text)
+                                    label.startAnimation(fadeIn)
+                                    resetArtwork()
+                                    buttonAnimation(actionButton, "stp")
+                                }
+
+                                true -> {
+                                    label.startAnimation(fadeOut)
+                                    loadView.startAnimation(fadeIn)
+                                    buttonAnimation(actionButton, "pts")
+                                }
+                            }
+                        }
+                    }
                 }
             }
-        }
+        )
     }
 
     override fun onPause() {

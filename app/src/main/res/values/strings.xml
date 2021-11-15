@@ -13,4 +13,6 @@
     <string name="notification_prev_content_description">Skip Previous</string>
     <string name="notification_playAndPause_content_description">Play and Pause</string>
     <string name="notification_next_content_description">Skip Next</string>
+
+    <string name="now_playing_notification">Now Playing</string>
 </resources>

@@ -3,20 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="5dp"
+    android:paddingHorizontal="15dp"
     android:orientation="vertical"
-    android:background="@color/darkBlue">
+    android:background="@color/darkBlue"
+    android:paddingStart="10dp"
+    android:paddingEnd="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/firstLinearLayoutSize"
-        android:layout_margin="@dimen/firstLinearLayoutMargin"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal"
         android:layout_gravity="start">
 
         <ImageView
-            android:layout_width="@dimen/firstLinearLayoutSize"
-            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_width="@dimen/notificationAppIconSize"
+            android:layout_height="@dimen/notificationAppIconSize"
             android:contentDescription="@string/notification_icon_content_description"
             android:src="@drawable/icon_round">
         </ImageView>
@@ -37,56 +42,72 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginVertical="7dp"
         android:orientation="horizontal">
 
-        <TextView
+        <LinearLayout
             android:gravity="center"
-            android:id="@+id/notificationCurrentlyPlayingTitle"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/firstLinearLayoutMargin"
-            tools:text="Currently Playing"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp">
-        </TextView>
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp"
+                android:text="@string/now_playing_notification"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:textStyle="bold">
+            </TextView>
+
+            <TextView
+                android:id="@+id/notificationCurrentlyPlayingTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Currently Playing"
+                android:textColor="@color/white"
+                android:textSize="15sp">
+            </TextView>
+
+        </LinearLayout>
 
         <LinearLayout
-            android:gravity="end"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:paddingVertical="@dimen/firstLinearLayoutMargin"
-            android:paddingLeft="0dp"
-            android:paddingRight="15dp"
             android:orientation="horizontal"
-            android:layout_marginStart="10dp"
-            android:paddingStart="0dp"
-            android:paddingEnd="15dp">
+            android:gravity="end"
+            android:paddingVertical="@dimen/firstLinearLayoutMargin">
 
-             <ImageView
-                 android:layout_width="wrap_content"
-                 android:layout_height="match_parent"
-                 android:src="@drawable/notification_prev"
-                 android:contentDescription="@string/notification_prev_content_description">
-             </ImageView>
+            <ImageView
+                android:id="@+id/notification_previous_button"
+                android:focusable="true"
+                android:layout_width="@dimen/notificationButtonSize"
+                android:layout_height="@dimen/notificationButtonSize"
+                android:contentDescription="@string/notification_prev_content_description"
+                android:src="@drawable/notification_prev">
+            </ImageView>
 
-             <ImageView
-                 android:layout_width="wrap_content"
-                 android:layout_height="match_parent"
-                 android:src="@drawable/notification_pause"
-                 android:contentDescription="@string/notification_playAndPause_content_description">
-             </ImageView>
+            <ImageView
+                android:id="@+id/notification_playback_button"
+                android:focusable="true"
+                android:layout_width="@dimen/notificationButtonSize"
+                android:layout_height="@dimen/notificationButtonSize"
+                android:contentDescription="@string/notification_playAndPause_content_description"
+                android:src="@drawable/notification_pause">
+            </ImageView>
 
-             <ImageView
-                 android:layout_width="wrap_content"
-                 android:layout_height="match_parent"
-                 android:src="@drawable/notification_next"
-                 android:contentDescription="@string/notification_next_content_description">
-             </ImageView>
+            <ImageView
+                android:id="@+id/notification_next_button"
+                android:focusable="true"
+                android:layout_width="@dimen/notificationButtonSize"
+                android:layout_height="@dimen/notificationButtonSize"
+                android:contentDescription="@string/notification_next_content_description"
+                android:src="@drawable/notification_next">
+            </ImageView>
 
         </LinearLayout>
 
     </LinearLayout>
-
 
 </LinearLayout>

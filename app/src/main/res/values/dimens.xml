@@ -19,8 +19,11 @@
     //notification dimensions
     <dimen name="firstLinearLayoutMargin">5dp</dimen>
     <dimen name="firstLinearLayoutSize">20dp</dimen>
-    <dimen name="textMargin">15dp</dimen>
+    <dimen name="textMargin">9dp</dimen>
 
     <dimen name="thirdLayoutVerticalMargin">10dp</dimen>
     <dimen name="thirdLayoutHorizontalMargin">30dp</dimen>
+
+    <dimen name="notificationAppIconSize">12dp</dimen>
+    <dimen name="notificationButtonSize">50dp</dimen>
 </resources>

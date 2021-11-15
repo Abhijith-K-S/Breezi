@@ -1,5 +1,10 @@
 package com.example.breezi
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
+
 object StreamDetails {
     data class StreamData(val id: Int, val streamName: String, val streamURL: String)
 
@@ -19,13 +24,44 @@ object StreamDetails {
         R.drawable.artwork5
     )
 
+    const val sharedPreferencesFileName = "SHARED_PREFERENCES"
+    const val streamIndex = "STREAM_INDEX"
+    const val isPlaying = "IS_PLAYING"
+
     const val notificationID = 101
-    const val  customBroadcast = "CUSTOM_BROADCAST"
 
     const val startStream = "START_SERVICE"
     const val stopStream = "STOP_SERVICE"
 
-    data class MainActivitySupport(val id: Int,val code:String)
-    val prepSupport = MainActivitySupport(201,"ON_PREPARE_SUPPORT")
-    val errorSupport = MainActivitySupport(202,"ON_ERROR_SUPPORT")
+    const val prepSupport = "ON_PREPARE_SUPPORT"
+    const val errorSupport ="ON_ERROR_SUPPORT"
+
+    const val notificationPrevious = "NOTIFICATION_PREVIOUS"
+    const val notificationPlayback = "NOTIFICATION_PLAY_OR_PAUSE"
+    const val notificationNext = "NOTIFICATION_NEXT"
+
+
+    //function to check for network connectivity
+    fun isOnline(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        {
+            val network = connectivityManager.activeNetwork ?: return false
+            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+            return when {
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                else -> false
+            }
+        }
+        else
+        {
+            @Suppress("DEPRECATION") val networkInfo =
+                connectivityManager.activeNetworkInfo ?: return false
+            @Suppress("DEPRECATION")
+            return networkInfo.isConnected
+        }
+    }
 }
