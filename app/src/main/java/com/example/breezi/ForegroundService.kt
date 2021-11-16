@@ -80,7 +80,7 @@ class ForegroundService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
                 mediaPlayer.reset()
                 val notification = createNotification(streamIndex,false)
                 notificationManager.notify(StreamDetails.notificationID,notification)
-                stopForeground(false)
+                stopForeground(true)
                 stopSelf(StreamDetails.notificationID)
             }
 
@@ -119,7 +119,7 @@ class ForegroundService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
                 when(isPlaying) {
                     true -> {
                         mediaPlayer.reset()
-                        stopForeground(false)
+                        stopForeground(true)
                         stopSelf(StreamDetails.notificationID)
                         editor.putBoolean(StreamDetails.isPlaying,!isPlaying)
                         editor.apply()
@@ -193,7 +193,7 @@ class ForegroundService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
         val notification = createNotification(sharedPref.getInt(StreamDetails.streamIndex,0),false)
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(StreamDetails.notificationID, notification)
-        stopForeground(false)
+        stopForeground(true)
         stopSelf(StreamDetails.notificationID)
         return true
     }
@@ -249,7 +249,7 @@ class ForegroundService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationChannel = NotificationChannel(channelID,"Playback", NotificationManager.IMPORTANCE_DEFAULT)
+            notificationChannel = NotificationChannel(channelID,"Playback", NotificationManager.IMPORTANCE_LOW)
             notificationChannel.lightColor = R.color.darkBlue
             notificationChannel.enableVibration(false)
             notificationManager.createNotificationChannel(notificationChannel)
@@ -259,14 +259,18 @@ class ForegroundService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
                 .setSmallIcon(R.drawable.icon_round)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources,R.drawable.icon_round))
                 .setContentIntent(pendingIntent)
+                .setOngoing(isPlaying)
         }
 
         else {
             builder = Notification.Builder(this)
                 .setContent(contentView)
+                .setSound(null)
+                .setPriority(Notification.PRIORITY_LOW)
                 .setSmallIcon(R.drawable.icon_round)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources,R.drawable.icon_round))
                 .setContentIntent(pendingIntent)
+                .setOngoing(isPlaying)
         }
 
         return builder.build()

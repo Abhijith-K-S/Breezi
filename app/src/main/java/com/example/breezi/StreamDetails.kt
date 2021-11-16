@@ -16,12 +16,12 @@ object StreamDetails {
         StreamData(4, "BFlash", "http://bardia.cloud:8000/stream/1/")
     )
 
-    val artworkList = listOf(
-        R.drawable.artwork1,
-        R.drawable.artwork2,
-        R.drawable.artwork3,
-        R.drawable.artwork4,
-        R.drawable.artwork5
+    val artworkUrl = listOf(
+        "https://images.unsplash.com/photo-1620926987470-8b07366a88b0?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=687&q=80",
+        "https://images.pexels.com/photos/9901513/pexels-photo-9901513.jpeg?cs=srgb&dl=pexels-erik-mclean-9901513.jpg&fm=jpg",
+        "https://images.pexels.com/photos/2289236/pexels-photo-2289236.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "https://images.pexels.com/photos/3052361/pexels-photo-3052361.jpeg",
+        "https://images.unsplash.com/photo-1619301694814-1528ad10b5c1?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=685&q=80"
     )
 
     const val sharedPreferencesFileName = "SHARED_PREFERENCES"

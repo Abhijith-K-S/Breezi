@@ -18,13 +18,14 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val streamList = StreamDetails.streamList
-    private val artworkList = StreamDetails.artworkList
 
     private val streamDataSize = streamList.size
     private var streamIndex = 0
@@ -252,8 +253,7 @@ class MainActivity : AppCompatActivity() {
         if(isPlaying) {
             label.text = streamList[streamIndex].streamName
             actionButton.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.play_to_stop_anim))
-            artworkWindow.setImageResource(artworkList[streamIndex])
-            backgroundArt.setImageResource(artworkList[streamIndex])
+            glideImageLoader()
         }
 
         else {
@@ -334,12 +334,27 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    //function to load images
+    private fun glideImageLoader() {
+        Glide.with(applicationContext).load(StreamDetails.artworkUrl[streamIndex])
+            .placeholder(R.drawable.icon)
+            .error(R.drawable.icon)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .into(artworkWindow.currentView as ImageView)
+
+        Glide.with(applicationContext).load(StreamDetails.artworkUrl[streamIndex])
+            .placeholder(android.R.color.transparent)
+            .error(android.R.color.transparent)
+            .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .into(backgroundArt.currentView as ImageView)
+    }
+
+
     fun onPreparedSupport() {
         label.text = streamList[streamIndex].streamName
         loadView.startAnimation(fadeOut)
         label.startAnimation(fadeIn)
-        artworkWindow.setImageResource(artworkList[streamIndex])
-        backgroundArt.setImageResource(artworkList[streamIndex])
+        glideImageLoader()
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)

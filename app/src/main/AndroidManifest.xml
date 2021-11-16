@@ -16,6 +16,7 @@
         android:roundIcon="@mipmap/icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Breezi"
+        android:testOnly="false"
         tools:targetApi="n">
 
         <activity
