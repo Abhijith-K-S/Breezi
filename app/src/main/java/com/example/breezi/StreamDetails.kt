@@ -58,8 +58,8 @@ object StreamDetails {
         }
         else
         {
-            @Suppress("DEPRECATION") val networkInfo =
-                connectivityManager.activeNetworkInfo ?: return false
+            @Suppress("DEPRECATION")
+            val networkInfo = connectivityManager.activeNetworkInfo ?: return false
             @Suppress("DEPRECATION")
             return networkInfo.isConnected
         }

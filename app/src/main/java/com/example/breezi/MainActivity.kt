@@ -11,7 +11,6 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.content.res.AppCompatResources
@@ -49,7 +48,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     //function to play button animation
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("UseCompatLoadingForDrawables")
     fun buttonAnimation(actionButton: ImageView,action: String)
     {
@@ -92,7 +90,6 @@ class MainActivity : AppCompatActivity() {
 
 
     @SuppressLint("UseCompatLoadingForDrawables", "UnspecifiedImmutableFlag")
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -137,12 +134,6 @@ class MainActivity : AppCompatActivity() {
         backgroundArt.setInAnimation(applicationContext,R.anim.fade_in)
         backgroundArt.setOutAnimation(applicationContext,R.anim.fade_out)
         backgroundArt.setBackgroundColor(ContextCompat.getColor(applicationContext,R.color.darkBlue))
-
-
-        //hiding loadView
-        loadView.visibility = View.GONE
-        loadView.startAnimation(fadeOut)
-        loadView.visibility = View.VISIBLE
 
 
         //function to control playback
@@ -244,7 +235,6 @@ class MainActivity : AppCompatActivity() {
 
 
     //function to load data from shared preferences
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun loadStream() {
         streamIndex = preferences.getInt(StreamDetails.streamIndex,0)
         isPlaying = preferences.getBoolean(StreamDetails.isPlaying,false)
@@ -264,7 +254,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onResume() {
         super.onResume()
 
@@ -350,15 +339,15 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun onPreparedSupport() {
+    private fun onPreparedSupport() {
         label.text = streamList[streamIndex].streamName
         loadView.startAnimation(fadeOut)
         label.startAnimation(fadeIn)
         glideImageLoader()
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    fun onErrorSupport() {
+
+    private fun onErrorSupport() {
         showToast("MediaPlayer Error")
         isPlaying = false
         buttonAnimation(actionButton,"stp")

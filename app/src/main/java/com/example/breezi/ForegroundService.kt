@@ -9,8 +9,9 @@ import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.widget.RemoteViews
-import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.lifecycle.MutableLiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -21,11 +22,10 @@ class ForegroundService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
         TODO("Not yet implemented")
     }
 
-    fun isOnline(context: Context): Boolean {
+    private fun isOnline(context: Context): Boolean {
         return StreamDetails.isOnline(context)
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private var mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(
                 AudioAttributes.Builder()
@@ -44,7 +44,6 @@ class ForegroundService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
     }
 
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //shared preferences
         val sharedPreferences = this.getSharedPreferences(StreamDetails.sharedPreferencesFileName,Context.MODE_PRIVATE)
@@ -171,16 +170,28 @@ class ForegroundService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
             }
         }
 
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onDestroy() {
         stopForeground(true)
         stopSelf()
+        val sharedPreferences = this.getSharedPreferences(StreamDetails.sharedPreferencesFileName,Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+
+        if(sharedPreferences.getBoolean(StreamDetails.isPlaying,true)) {
+            editor.putBoolean(StreamDetails.isPlaying,false)
+            editor.apply()
+        }
+
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(StreamDetails.notificationID)
+
+        mediaPlayer.release()
         super.onDestroy()
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+
     override fun onPrepared(p0: MediaPlayer?) {
         mediaPlayer.start()
         uiSupportService(StreamDetails.prepSupport)
@@ -211,7 +222,7 @@ class ForegroundService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
         lateinit var notificationChannel: NotificationChannel
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channelID = "MainChannel"
-        lateinit var builder: Notification.Builder
+        lateinit var builder: NotificationCompat.Builder
 
         val intent = Intent(this,MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT)
@@ -252,9 +263,10 @@ class ForegroundService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
             notificationChannel = NotificationChannel(channelID,"Playback", NotificationManager.IMPORTANCE_LOW)
             notificationChannel.lightColor = R.color.darkBlue
             notificationChannel.enableVibration(false)
+            notificationChannel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
             notificationManager.createNotificationChannel(notificationChannel)
 
-            builder = Notification.Builder(this,channelID)
+            builder = NotificationCompat.Builder(this,channelID)
                 .setCustomContentView(contentView)
                 .setSmallIcon(R.drawable.icon_round)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources,R.drawable.icon_round))
@@ -263,13 +275,15 @@ class ForegroundService: Service(), MediaPlayer.OnPreparedListener, MediaPlayer.
         }
 
         else {
-            builder = Notification.Builder(this)
+            @Suppress("DEPRECATION")
+            builder = NotificationCompat.Builder(this)
                 .setContent(contentView)
                 .setSound(null)
-                .setPriority(Notification.PRIORITY_LOW)
+                .setPriority(Notification.PRIORITY_HIGH)
                 .setSmallIcon(R.drawable.icon_round)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources,R.drawable.icon_round))
                 .setContentIntent(pendingIntent)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setOngoing(isPlaying)
         }
 
